@@ -1,17 +1,31 @@
 package com.example.calculator;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.os.Bundle;
 
+import org.jetbrains.annotations.NonNls;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, enter, add, sub, mul, div, clear;
+    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, enter, add, sub, mul, div, clear, history;
     TextView result;
     Double var1;
     Double var2;
     Double ans;
+    String function;
+    String msghistory;
+    List<String> listshow = new ArrayList<String>();
+    String[] arr = new String[listshow.size()];
+
     Boolean addition = false, subtract = false, multiply = false, divide = false;
     public void setVar1(){
         var1 = Double.parseDouble(result.getText().toString());
@@ -32,6 +46,21 @@ public class MainActivity extends AppCompatActivity {
         add.setEnabled(false);
         result.setText("");
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(result.getText().toString() != null)
+            outState.putString("show", result.getText().toString() );
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState.get("show") != null)
+            result.setText(savedInstanceState.get("show").toString());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         enter = findViewById(R.id.btnenter);
         clear = findViewById(R.id.btnclr);
         result = findViewById(R.id.result);
+        history = findViewById(R.id.btnhistory);
 
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,22 +204,42 @@ public class MainActivity extends AppCompatActivity {
                 var2 = Double.parseDouble(result.getText().toString());
                 if(addition){
                     ans = var1 + var2;
+                    function = String.valueOf(var1) + " + " + String.valueOf(var2);
                     addition = false;
                 } else if (subtract){
                     ans = var1 - var2;
+                    function = String.valueOf(var1) + " - " + String.valueOf(var2);
                     subtract = false;
                 } else if (multiply){
                     ans = var1 * var2;
+                    function = String.valueOf(var1) + " * " + String.valueOf(var2);
                     multiply = false;
                 } else if (divide){
                     ans = var1 / var2;
+                    function = String.valueOf(var1) + " / " + String.valueOf(var2);
                     divide = false;
                 } else {
                     ans = ans + 0;
                 }
                 result.setText(ans.toString());
+                msghistory = function + " = " + result.getText().toString();
+                listshow.add(msghistory);
+
                 enter.setEnabled(false);
             }
         });
+        history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MainActivity.this, MainHistory.class);
+                arr = listshow.toArray(arr);
+
+                intent.putExtra( "showhistory", arr);
+                startActivity(intent);
+
+            }
+        });
     }
+
 }

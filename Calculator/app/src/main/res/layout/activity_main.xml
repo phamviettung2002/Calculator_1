@@ -181,6 +181,13 @@
                 android:text="0" />
 
             <Button
+                android:id="@+id/btnhistory"
+                android:layout_width="78dp"
+                android:layout_height="38dp"
+                android:layout_weight="0.03"
+                android:text="ANS" />
+
+            <Button
                 android:id="@+id/btnenter"
                 android:layout_width="78dp"
                 android:layout_height="38dp"
